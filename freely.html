@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>룰렛돌리기</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="wrap">
+        <div class="inner">
+            <select name="catgory" class="form" onchange="if(this.value) location.href=(this.value);">
+                <option value="./freely.php">내 맘대로 룰렛</option>
+                <option value="./puppy.php">애완동물 이름 짓기</option>
+                <option value="javascript:;">오늘 뭐먹지?</option>
+                <option value="javascript:;">랜덤 술자리</option>
+                <option value="javascript:;">퍼스널 컬러</option>
+            </select>
+            <div id="app"></div>
+            <div class="roulette">
+                <div class="input_wrap" id="inputWrap"></div>
+            </div>
+            <div class="buttons">
+                <button onclick="addInput()">+</button>
+                <button onclick="removeInput()">-</button>
+            </div>
+        </div>
+    </div>
+    
+</body>
+<script>
+
+
+let rolLength = 6; // 해당 룰렛 콘텐츠 갯수
+let setNum; // 랜덤숫자 담을 변수
+let hiddenInput = document.createElement("input");
+hiddenInput.className = "hidden-input";
+
+//랜덤숫자부여
+const rRandom = () => {
+    let min = Math.ceil(0);
+    let max = Math.floor(rolLength - 1);
+  return Math.floor(Math.random() * (max - min)) + min;
+};
+
+const rRotate = () => {
+    let panel = document.querySelector(".roulette");
+    let btn = document.querySelector(".rouletter-btn");
+    let deg = [];
+  // 룰렛 각도 설정(rolLength = 6)
+    for (let i = 1, len = rolLength; i <= len; i++) {
+    deg.push((360 / len) * i);
+    }
+
+  // 랜덤 생성된 숫자를 히든 인풋에 넣기
+    let num = 0;
+    document.body.append(hiddenInput);
+    setNum = hiddenInput.value = rRandom();
+    
+  // 애니설정
+let ani = setInterval(() => {
+    num++;
+    panel.style.transform = "rotate(" + 360 * num + "deg)";
+    btn.disabled = true; //button,input
+    btn.style.pointerEvents = "none"; //a 태그
+    
+    // 총 50에 다달했을때, 즉 마지막 바퀴를 돌고나서
+    if (num === 50) {
+        clearInterval(ani);
+        panel.style.transform = `rotate(${deg[setNum]}deg)`;
+    }
+}, 50);
+};
+
+// 정해진 alert띄우기, custom modal등
+const rLayerPopup = (num) => {
+    switch (num) {
+    case 1:
+        alert("당첨!!");
+        break;
+    case 3:
+        alert("당첨!!");
+        break;
+    case 5:
+        alert("당첨!!");
+        break;
+    default:
+        alert("꽝! 다음기회에");
+    }
+};
+
+// reset
+const rReset = (ele) => {
+    setTimeout(() => {
+    ele.disabled = false;
+    ele.style.pointerEvents = "auto";
+    rLayerPopup(setNum);
+    hiddenInput.remove();
+    }, 5500);
+};
+
+// 룰렛 이벤트 클릭 버튼
+document.addEventListener("click", function (e) {
+    let target = e.target;
+    if (target.tagName === 'BUTTON') {
+    rRotate();
+    rReset(target);
+    }
+});
+
+// roulette default
+document.getElementById("app").innerHTML = `
+<div class="rouletter">
+    <div class="rouletter-bg">
+        <div class="rouletter-wacu"></div>
+        <canvas width="300" height="300" id="canvas"></canvas>
+    </div>
+    <div class="rouletter-arrow"></div>
+    <div class="roulett-btn">
+        <button class="rouletter-btn">Start <i></i></button>
+    </div>
+</div>
+`;
+
+</script>
+</html>
